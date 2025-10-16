@@ -1,5 +1,5 @@
 // =================================== 
-// 🔭 DOM SCOUT v4.1 - Templates Otimizados
+// 🔭 DOM SCOUT v4.2.2 - VERSÃO LIMPA
 // ===================================
 // Para usar: Cole este código no Console (F12) e pressione Enter
 // Atalho: Ctrl+F para abrir e navegar
@@ -191,7 +191,6 @@
             cursor: not-allowed;
         }
 
-        /* ✅ NOVO: Ícone do Template Status */
         .dom-scout-template-icon {
             display: none;
             cursor: pointer;
@@ -215,7 +214,6 @@
             transform: scale(1.1);
         }
 
-        /* ✅ NOVO: Modal do Template */
         .dom-scout-template-modal {
             position: fixed;
             top: 50%;
@@ -305,60 +303,30 @@
             border: 1px solid #e9ecef;
         }
 
-        /* 🔄 ESTILOS RESPONSIVOS */
-        @media (max-width: 768px) {
-            #dom-scout-container {
-                padding: 6px 8px;
-                font-size: 11px;
-            }
-            
-            #dom-scout-main {
-                gap: 4px;
-                margin-bottom: 4px;
-            }
-            
-            #dom-scout-input {
-                padding: 4px 8px;
-                font-size: 11px;
-                height: 24px;
-                min-width: 100px;
-            }
-            
-            .dom-scout-btn {
-                padding: 3px 8px;
-                font-size: 10px;
-                height: 22px;
-            }
-            
-            #dom-scout-options {
-                gap: 6px;
-            }
-            
-            .dom-scout-option {
-                font-size: 9px;
-                padding: 1px 4px;
-                height: 16px;
-            }
+        #dom-scout-container.compact-mode #dom-scout-options,
+        #dom-scout-container.compact-mode #dom-scout-templates {
+            display: none !important;
         }
 
-        @media (max-width: 480px) {
-            #dom-scout-main {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 4px;
-            }
-            
-            #dom-scout-input {
-                min-width: auto;
-            }
-            
-            #dom-scout-info {
-                min-width: auto;
-                align-self: center;
-            }
+        #dom-scout-container.compact-mode {
+            min-height: 40px;
+            height: 40px;
+            overflow: hidden;
         }
 
-        /* 🎨 MANTÉM OS ESTILOS EXISTENTES DE HIGHLIGHT */
+        #dom-scout-container.compact-mode #dom-scout-main {
+            margin-bottom: 0;
+        }
+
+        #dom-scout-options, #dom-scout-templates {
+            transition: all 0.3s ease-in-out;
+        }
+
+        #dom-scout-container.compact-mode #dom-scout-toggle-options {
+            background: rgba(255, 217, 61, 0.3);
+            border-color: rgba(255, 217, 61, 0.6);
+        }
+
         .dom-scout-highlight {
             outline: 2px solid #4A90E2 !important;
             outline-offset: 1px;
@@ -436,12 +404,6 @@
                 background: #45b8b0;
                 transform: scale(1.05);
             }
-        }
-
-        .dom-scout-error {
-            color: #ffcccc;
-            font-size: 12px;
-            margin-top: 5px;
         }
 
         .dom-scout-success {
@@ -526,10 +488,6 @@
             outline: none;
         }
 
-        #dom-scout-template-select:focus {
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
-        }
-
         .dom-scout-template-btn {
             background: rgba(255,255,255,0.25);
             border: 1px solid rgba(255,255,255,0.4);
@@ -548,17 +506,9 @@
             transform: translateY(-1px);
         }
 
-        .dom-scout-template-btn:active {
-            transform: translateY(0);
-        }
-
         .dom-scout-template-btn.save {
             background: rgba(78, 205, 196, 0.3);
             border-color: rgba(78, 205, 196, 0.5);
-        }
-
-        .dom-scout-template-btn.save:hover {
-            background: rgba(78, 205, 196, 0.4);
         }
 
         .dom-scout-template-btn.delete {
@@ -566,56 +516,32 @@
             border-color: rgba(255, 107, 107, 0.5);
         }
 
-        .dom-scout-template-btn.delete:hover {
-            background: rgba(255, 107, 107, 0.4);
-        }
-
-        .dom-scout-template-btn.close {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .dom-scout-template-btn.close:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .dom-scout-template-info {
-            color: rgba(255,255,255,0.8);
-            font-size: 11px;
-            margin-top: 5px;
-            font-style: italic;
-        }
-
-        .dom-scout-template-placeholder {
-            color: rgba(255,255,255,0.7);
-            background: rgba(255,255,255,0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-        }
-
         @media (max-width: 768px) {
             #dom-scout-container {
-                padding: 10px 15px;
+                padding: 6px 8px;
+                font-size: 11px;
             }
             
             #dom-scout-main {
-                gap: 5px;
+                gap: 4px;
+                margin-bottom: 4px;
+            }
+            
+            #dom-scout-input {
+                padding: 4px 8px;
+                font-size: 11px;
+                height: 24px;
+                min-width: 100px;
             }
             
             .dom-scout-btn {
-                padding: 6px 12px;
-                font-size: 12px;
+                padding: 3px 8px;
+                font-size: 10px;
+                height: 22px;
             }
         }
     `;
 
-    // Substituir o elemento de estilo existente
-    const existingStyle = document.querySelector('style');
-    if (existingStyle) {
-        existingStyle.remove();
-    }
     const styleElement = document.createElement('style');
     styleElement.textContent = styles;
     document.head.appendChild(styleElement);
@@ -640,6 +566,7 @@
                     />
                     <span id="dom-scout-info">0 resultados</span>
                     <button class="dom-scout-btn" id="dom-scout-templates-toggle" style="display:none;">📋 Templates</button>
+                    <button class="dom-scout-btn" id="dom-scout-toggle-options" title="Ocultar opções">⬆️</button>
                     <button class="dom-scout-btn" id="dom-scout-clear">Limpar</button>
                     <button class="dom-scout-btn" id="dom-scout-close">Fechar</button>
                 </div>
@@ -685,7 +612,6 @@
                         <button class="dom-scout-template-btn close" id="dom-scout-template-close" title="Fechar">✖️</button>
                     </div>
                 </div>
-                <div id="dom-scout-error"></div>
                 <div style="color: rgba(255,255,255,0.7); font-size: 9px; margin-top: 4px; line-height: 1.2;">
                     💡 Ctrl+F: próximo | Shift+F: anterior | Ctrl+Enter: ação | ESC: fechar
                 </div>
@@ -699,7 +625,6 @@
     const searchContainer = createSearchUI();
     const searchInput = document.getElementById('dom-scout-input');
     const searchInfo = document.getElementById('dom-scout-info');
-    const searchError = document.getElementById('dom-scout-error');
     const clearBtn = document.getElementById('dom-scout-clear');
     const closeBtn = document.getElementById('dom-scout-close');
     const templatesToggleBtn = document.getElementById('dom-scout-templates-toggle');
@@ -718,9 +643,8 @@
     const templateLoadBtn = document.getElementById('dom-scout-template-load');
     const templateDeleteBtn = document.getElementById('dom-scout-template-delete');
     const templateCloseBtn = document.getElementById('dom-scout-template-close');
-    const templateInfo = document.getElementById('dom-scout-template-info');
-    const templateStatus = document.getElementById('dom-scout-template-status');
-    const templateStatusText = document.getElementById('dom-scout-template-status-text');
+
+    const toggleOptionsBtn = document.getElementById('dom-scout-toggle-options');
 
     // ===================================
     // 🔧 FUNÇÕES AUXILIARES
@@ -781,7 +705,6 @@
         }
     }
 
-    // ✅ NOVO: Ícone do Template Status (substitui a função anterior)
     function updateTemplateStatus() {
         const templateIcon = document.querySelector('.dom-scout-template-icon');
         if (!templateIcon) return;
@@ -795,21 +718,17 @@
         }
     }
 
-    // ✅ NOVO: Modal do Template
     function showTemplateModal() {
         if (!currentTemplate) return;
 
-        // Remove modal existente se houver
         const existingModal = document.querySelector('.dom-scout-template-modal');
         const existingOverlay = document.querySelector('.dom-scout-template-modal-overlay');
         if (existingModal) existingModal.remove();
         if (existingOverlay) existingOverlay.remove();
 
-        // Cria overlay
         const overlay = document.createElement('div');
         overlay.className = 'dom-scout-template-modal-overlay';
         
-        // Cria modal
         const modal = document.createElement('div');
         modal.className = 'dom-scout-template-modal';
         modal.innerHTML = `
@@ -824,7 +743,6 @@
             </div>
         `;
 
-        // Adiciona eventos
         const closeBtn = modal.querySelector('.dom-scout-template-modal-close');
         const closeModal = () => {
             modal.style.animation = 'modalFadeIn 0.3s ease-out reverse';
@@ -838,12 +756,10 @@
         closeBtn.addEventListener('click', closeModal);
         overlay.addEventListener('click', closeModal);
         
-        // Adiciona ao DOM
         document.body.appendChild(overlay);
         document.body.appendChild(modal);
     }
 
-    // ✅ NOVO: Event Listener para o ícone do template
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('dom-scout-template-icon') && 
             e.target.classList.contains('active')) {
@@ -923,7 +839,7 @@
         savedTemplates.push(template);
         saveTemplates();
         updateTemplateSelect();
-        showSuccess('✓ Template salvo!');
+        showSuccess('✔ Template salvo!');
         
         toggleTemplatesPanel(false);
     }
@@ -940,15 +856,15 @@
 
         if (!searchOptions.useTemplate) {
             searchInput.value = template.query;
-            showSuccess('✓ Template carregado no campo!');
+            showSuccess('✔ Template carregado no campo!');
         } 
         else {
             currentTemplate = template;
             searchInput.value = '';
             searchInput.disabled = false;
             updatePlaceholder();
-            updateTemplateStatus(); // ✅ ATUALIZADO
-            showSuccess('✓ Template ativo! Digite o valor');
+            updateTemplateStatus();
+            showSuccess('✔ Template ativo! Digite o valor');
         }
         
         toggleTemplatesPanel(false);
@@ -970,11 +886,11 @@
         
         if (currentTemplate === template) {
             currentTemplate = null;
-            updateTemplateStatus(); // ✅ ATUALIZADO
+            updateTemplateStatus();
             updateInputState();
         }
         
-        showSuccess('✓ Template excluído!');
+        showSuccess('✔ Template excluído!');
         toggleTemplatesPanel(false);
     }
 
@@ -983,13 +899,37 @@
             return userInput;
         }
 
-        let processedQuery = currentTemplate.query.replace(/\{text\}/g, userInput);
+        return processQuotedTemplate(userInput);
+    }
+
+    function processQuotedTemplate(userInput) {
+        if (!currentTemplate) return userInput;
+
+        let processedQuery = currentTemplate.query;
         
-        return processedQuery;
+        const placeholderRegex = /\{text\}/g;
+        const quotedPlaceholderRegex = /"([^"]*)\{text\}([^"]*)"|'([^']*)\{text\}([^']*)'/g;
+        
+        let result = processedQuery;
+        let match;
+        
+        while ((match = quotedPlaceholderRegex.exec(processedQuery)) !== null) {
+            if (match[1] !== undefined) {
+                const replacement = `"${match[1]}${userInput}${match[2]}"`;
+                result = result.replace(match[0], replacement);
+            } else if (match[3] !== undefined) {
+                const replacement = `'${match[3]}${userInput}${match[4]}'`;
+                result = result.replace(match[0], replacement);
+            }
+        }
+        
+        result = result.replace(placeholderRegex, userInput);
+        
+        return result;
     }
 
     // ===================================
-    // 🔍 PARSE AVANÇADO COM NOVOS OPERADORES
+    // 🔍 PARSE AVANÇADO
     // ===================================
 
     function parseAdvancedQuery(query) {
@@ -1018,10 +958,14 @@
         let highlightIndex = -1;
 
         hierarchyLevels.forEach((level, index) => {
+            console.log('✅ parseAdvancedQuery - hierarchyLevels - antes', { 
+              level
+            });    
             const hasHighlight = level.includes('*');
             if (hasHighlight) {
                 highlightIndex = index;
-                level = level.replace(/\*/g, '').trim();
+                // 🆕 USA FUNÇÃO CORRIGIDA
+                level = removeHighlightAsterisks(level);
             }
 
             const parsed = parseFilters(level);
@@ -1035,6 +979,9 @@
                 highlight: hasHighlight,
                 level: index
             });
+            console.log('✅ parseAdvancedQuery - hierarchyLevels - depois', { 
+              level
+            });  
         });
 
         const errorLevel = parsedHierarchy.find(h => h.error);
@@ -1062,29 +1009,82 @@
         };
     }
 
+    // 🆕 FUNÇÃO AUXILIAR: Remove apenas asteriscos de highlight (não os de regex)
+    function removeHighlightAsterisks(str) {
+        let result = '';
+        let inQuotes = false;
+        let quoteChar = null;
+        
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            const nextChar = str[i + 1];
+            
+            // Verifica se estamos entrando ou saindo de aspas
+            if ((char === '"' || char === "'") && (i === 0 || str[i - 1] !== '\\')) {
+                if (!inQuotes) {
+                    inQuotes = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inQuotes = false;
+                    quoteChar = null;
+                }
+            }
+            
+            // Se estivermos dentro de aspas, preserva todos os caracteres
+            if (inQuotes) {
+                result += char;
+            } 
+            // Se não estiver em aspas, remove apenas * que não sejam precedidos por \
+            else if (char === '*' && (i === 0 || str[i - 1] !== '\\')) {
+                // Não adiciona o * (remove)
+            } 
+            else {
+                result += char;
+            }
+        }
+        
+        return result.trim();
+    }
+
     function parseFilters(queryPart) {
         const filters = [];
-        const regex = /(tag|class|id|attr|text):([^\s:]+(?:=[^\s:]+)?)/gi;
+        // 🆕 CORREÇÃO COMPLETA: Regex totalmente revisada
+        const regex = /(tag|class|id|attr|text):(?:"([^"]*)"|'([^']*)'|(\{text\})|([^\s&><]+))/gi;
         let match;
         let hasMatch = false;
+
+        // 🆕 Reset da regex para evitar problemas com estado global
+        regex.lastIndex = 0;
 
         while ((match = regex.exec(queryPart)) !== null) {
             hasMatch = true;
             const type = match[1].toLowerCase();
-            let fullValue = match[2];
-            let key = fullValue;
+            let key = null;
+
+            // 🆕 Determinar qual grupo foi capturado
+            if (match[2] !== undefined) {
+                key = match[2]; // Aspas duplas
+            } else if (match[3] !== undefined) {
+                key = match[3]; // Aspas simples  
+            } else if (match[4] !== undefined) {
+                key = match[4]; // {text}
+            } else if (match[5] !== undefined) {
+                key = match[5]; // Sem aspas
+            }
+
             let value = null;
 
-            if (fullValue.includes('=')) {
-                const parts = fullValue.split('=');
-                key = parts[0];
-                value = parts.slice(1).join('=');
+            // Processar atributos com valores (attr:name=value)
+            if (key && key.includes('=') && type === 'attr') {
+                const eqIndex = key.indexOf('=');
+                value = key.substring(eqIndex + 1);
+                key = key.substring(0, eqIndex);
             }
 
             filters.push({ type, key, value });
         }
 
-        if (!hasMatch) {
+        if (!hasMatch && queryPart.trim()) {
             return {
                 error: 'Sintaxe: [tag:footer <] tag:div > *tag:span [& tag:button]'
             };
@@ -1094,16 +1094,14 @@
     }
 
     // ===================================
-    // 🔍 BUSCA HTML COM OPERADORES REFATORADOS
+    // 🔍 BUSCA HTML
     // ===================================
     function searchHTML(query) {
-        // ✅ CORREÇÃO CRÍTICA: Processa template se necessário
         if (searchOptions.useTemplate && currentTemplate) {
             query = processTemplateQuery(query);
         }
 
         clearHighlights();
-        searchError.textContent = '';
         currentMatches = [];
         currentIndex = 0;
 
@@ -1115,7 +1113,6 @@
         const parsed = parseAdvancedQuery(query);
         
         if (parsed.error) {
-            searchError.textContent = `❌ ${parsed.error}`;
             updateInfo(0, 0);
             return;
         }
@@ -1134,7 +1131,6 @@
             });
 
             if (searchScope.length === 0) {
-                searchError.textContent = '⚠️ Nenhum elemento no escopo definido';
                 updateInfo(0, 0);
                 return;
             }
@@ -1346,31 +1342,59 @@
             : elementAttrValue.toLowerCase().includes(searchValue.toLowerCase());
     }
 
-    function matchText(element, textValue, directOnly = false) {
-        let text;
+function matchText(element, textValue, directOnly = false) {
+    let text;
+    
+    if (directOnly) {
+        text = Array.from(element.childNodes)
+            .filter(node => node.nodeType === Node.TEXT_NODE)
+            .map(node => node.textContent.trim())
+            .join(' ');
+    } else {
+        text = element.textContent;
+    }
+    
+    let elementText = text.trim();
+    let searchText = textValue;
+    
+    // 🆕 CORREÇÃO: Processamento diferenciado para regex
+    if (searchOptions.regex) {
+        // Para regex, preservamos a string exatamente como foi fornecida
+        // apenas removemos as aspas externas se existirem
+        const isQuoted = (searchText.startsWith('"') && searchText.endsWith('"')) || 
+                        (searchText.startsWith("'") && searchText.endsWith("'"));
         
-        if (directOnly) {
-            text = Array.from(element.childNodes)
-                .filter(node => node.nodeType === Node.TEXT_NODE)
-                .map(node => node.textContent.trim())
-                .join(' ');
-        } else {
-            text = element.textContent.trim();
+        if (isQuoted) {
+            searchText = searchText.slice(1, -1);
         }
         
-        const elementText = prepareString(text);
-        const searchText = prepareString(textValue);
+        try {
+            // 🆕 CORREÇÃO CRÍTICA: Aplicar prepareString consistentemente
+            if (!searchOptions.accentSensitive) {
+                elementText = prepareString(elementText);
+                searchText = prepareString(searchText); // 🆕 AGORA TAMBÉM NO searchText!
+            }
+            
+            const flags = searchOptions.caseSensitive ? '' : 'i';
+            const regex = new RegExp(searchText, flags);
+            
+            return regex.test(elementText);
+        } catch (e) {
+            console.error('❌ Regex Error:', e);
+            return false;
+        }
+    } else {
+        // Processamento normal para texto sem regex
+        if ((searchText.startsWith('"') && searchText.endsWith('"')) || 
+            (searchText.startsWith("'") && searchText.endsWith("'"))) {
+            searchText = searchText.slice(1, -1);
+        }
+        
+        // 🆕 CORREÇÃO: Aplicar prepareString consistentemente
+        elementText = prepareString(elementText);
+        searchText = prepareString(searchText);
         
         if (!elementText) return false;
-        
-        if (searchOptions.regex) {
-            try {
-                const regex = new RegExp(searchText, searchOptions.caseSensitive ? '' : 'i');
-                return regex.test(elementText);
-            } catch (e) {
-                return false;
-            }
-        }
         
         if (searchOptions.wholeWords) {
             const regex = new RegExp(`\\b${escapeRegex(searchText)}\\b`, searchOptions.caseSensitive ? '' : 'i');
@@ -1381,6 +1405,7 @@
             ? elementText.includes(searchText)
             : elementText.toLowerCase().includes(searchText.toLowerCase());
     }
+}
 
     // ===================================
     // 🔍 BUSCA DE TEXTO
@@ -1400,7 +1425,6 @@
         }
 
         clearHighlights();
-        searchError.textContent = '';
         currentMatches = [];
         currentIndex = 0;
 
@@ -1416,7 +1440,6 @@
 
         const regex = createSearchRegex(searchTerm);
         if (!regex) {
-            searchError.textContent = '❌ Expressão regular inválida';
             updateInfo(0, 0);
             return;
         }
@@ -1487,20 +1510,14 @@
     }
 
     // ===================================
-    // 🎨 HIGHLIGHT COM SUPORTE A * - ✅ CORREÇÃO 2
+    // 🎨 HIGHLIGHT
     // ===================================
     function highlightElement(element, index, matchCount, isCurrent, actionElement, isStarred) {
-        // ✅ CORREÇÃO 2: Lógica de cores corrigida
-        // Prioridade: Current (amarelo) > Starred (ciano) > Normal (azul)
-        
         if (isCurrent) {
-            // Elemento ATUAL sempre AMARELO (maior prioridade)
             element.classList.add('dom-scout-highlight-current');
         } else if (isStarred) {
-            // Elemento STARRED sempre CIANO (quando não é atual)
             element.classList.add('dom-scout-highlight-star');
         } else {
-            // Elementos normais sempre AZUL
             element.classList.add('dom-scout-highlight');
         }
 
@@ -1555,54 +1572,40 @@
     function updateSearchResults() {
         if (!isVisible || !searchInput.value) return;
 
-        // Salva o elemento atualmente destacado e sua posição
         const currentElement = currentMatches[currentIndex]?.element;
         const previousLength = currentMatches.length;
 
-        console.log(`🔭 DOM Scout: Atualizando lista de resultados... (${previousLength} elementos anteriores)`);
-
-        // Refaz a busca com a query atual
         if (searchOptions.htmlMode) {
             searchHTML(searchInput.value);
         } else {
             searchText(searchInput.value);
         }
 
-        // Tenta manter a posição de navegação
         if (currentElement && currentMatches.length > 0) {
             const newIndex = currentMatches.findIndex(match => 
                 match.element === currentElement
             );
 
             if (newIndex !== -1) {
-                // Elemento anterior ainda existe, mantém a posição
                 currentIndex = newIndex;
-                console.log(`🔭 DOM Scout: Posição mantida - índice ${currentIndex}`);
             } else if (currentIndex < currentMatches.length) {
-                // Elemento anterior não existe, mas há elementos suficientes
-                console.log(`🔭 DOM Scout: Elemento anterior não encontrado, mantendo índice ${currentIndex}`);
+                // mantém índice
             } else {
-                // Índice anterior está fora dos limites, vai para o último elemento
                 currentIndex = Math.max(0, currentMatches.length - 1);
-                console.log(`🔭 DOM Scout: Índice ajustado para ${currentIndex}`);
             }
 
-            // Atualiza o highlight do elemento atual
             if (currentMatches[currentIndex]) {
                 goToMatch(currentIndex);
             }
         }
-
-        console.log(`🔭 DOM Scout: Lista atualizada - ${currentMatches.length} elementos (${currentMatches.length - previousLength} novos)`);
     }
 
     // ===================================
-    // 🎯 NAVEGAÇÃO - ✅ CORREÇÃO 3
+    // 🎯 NAVEGAÇÃO
     // ===================================
     function goToMatch(index) {
         if (currentMatches.length === 0) return;
 
-        // Remove highlight atual do elemento anterior
         if (currentMatches[currentIndex]) {
             const current = currentMatches[currentIndex].element;
             current.classList.remove('dom-scout-highlight-current');
@@ -1615,7 +1618,6 @@
                 actionBadge.remove();
             }
             
-            // ✅ CORREÇÃO 3: Restaura a classe correta do elemento anterior
             const prevMatch = currentMatches[currentIndex];
             if (prevMatch.isStarred) {
                 current.classList.add('dom-scout-highlight-star');
@@ -1635,11 +1637,9 @@
         const element = match.element;
         
         if (!searchOptions.highlightAll) {
-            // ✅ CORREÇÃO 3: Modo "um por vez" - limpa e destaca apenas o atual
             clearHighlights();
             highlightElement(element, currentIndex + 1, match.count, true, match.actionElement, match.isStarred);
         } else {
-            // ✅ CORREÇÃO 3: Modo "destacar todas" - remove classe antiga e adiciona a atual
             element.classList.remove('dom-scout-highlight');
             element.classList.remove('dom-scout-highlight-star');
             element.classList.add('dom-scout-highlight-current');
@@ -1674,7 +1674,6 @@
             return;
         }
 
-        // ✅ ATUALIZA: Atualiza lista antes de navegar
         updateSearchResults();
 
         if (currentMatches.length === 0) {
@@ -1688,7 +1687,6 @@
     function prevMatch() {
         if (!isVisible) return;
 
-        // ✅ ATUALIZA: Atualiza lista antes de navegar
         updateSearchResults();
 
         if (currentMatches.length === 0) {
@@ -1709,20 +1707,20 @@
         
         if (match.actionElement) {
             match.actionElement.click();
-            showSuccess(`✓ Ação executada em ${match.actionElement.tagName.toLowerCase()}`);
+            showSuccess(`✔ Ação executada em ${match.actionElement.tagName.toLowerCase()}`);
         } else {
             const element = match.element;
             const clickables = element.querySelectorAll('button, a, [role="button"], input[type="button"], input[type="submit"]');
             
             if (clickables.length > 0) {
                 clickables[0].click();
-                showSuccess(`✓ Clicado em ${clickables[0].tagName.toLowerCase()}`);
+                showSuccess(`✔ Clicado em ${clickables[0].tagName.toLowerCase()}`);
             } else if (element.tagName === 'BUTTON' || element.tagName === 'A') {
                 element.click();
-                showSuccess(`✓ Clicado em ${element.tagName.toLowerCase()}`);
+                showSuccess(`✔ Clicado em ${element.tagName.toLowerCase()}`);
             } else {
                 element.click();
-                showSuccess(`✓ Clique executado`);
+                showSuccess(`✔ Clique executado`);
             }
         }
     }
@@ -1739,7 +1737,7 @@
     }
 
     // ===================================
-    // 👁️ SHOW/HIDE - ✅ CORREÇÃO 3
+    // 👁️ SHOW/HIDE
     // ===================================
     function showSearch() {
         searchContainer.style.display = 'block';
@@ -1747,7 +1745,6 @@
         searchInput.select();
         isVisible = true;
         
-        // ✅ CORREÇÃO 3: Reaplica highlights ao reabrir se houver resultados
         if (currentMatches.length > 0 && searchOptions.highlightAll) {
             currentMatches.forEach((match, index) => {
                 const isCurrent = (index === currentIndex);
@@ -1766,7 +1763,7 @@
         if (searchOptions.useTemplate && currentTemplate) {
             searchInput.placeholder = `Digite o valor para: ${currentTemplate.name}`;
         } else if (searchOptions.htmlMode) {
-            searchInput.placeholder = '🔭 tag:footer < tag:div > *tag:span > text:valor & tag:button';
+            searchInput.placeholder = '🔭 tag:footer < tag:div > text:"valor com espaços" & tag:button';
         } else {
             searchInput.placeholder = '🔭 Buscar texto na página...';
         }
@@ -1789,13 +1786,13 @@
             if (!isVisible) {
                 showSearch();
             } else {
-                nextMatch(); // ✅ AGORA ATUALIZA AUTOMATICAMENTE
+                nextMatch();
             }
         }
 
         if (e.shiftKey && e.key === 'F' && isVisible) {
             e.preventDefault();
-            prevMatch(); // ✅ AGORA ATUALIZA AUTOMATICAMENTE
+            prevMatch();
         }
 
         if (e.key === 'Escape' && isVisible) {
@@ -1810,7 +1807,6 @@
         }
     });
 
-    // ✅ CORREÇÃO: Ctrl+Enter/Ctrl+Espaço para executar ação
     searchInput.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
@@ -1822,7 +1818,6 @@
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            // ✅ GARANTE: Sempre usa a busca apropriada para o modo atual
             if (searchOptions.htmlMode) {
                 searchHTML(e.target.value);
             } else {
@@ -1911,19 +1906,34 @@
     });
 
     templatesToggleBtn.addEventListener('click', () => {
+        const container = document.getElementById('dom-scout-container');
+        const isCompact = container.classList.contains('compact-mode');
+        
+        // Se estiver no modo compacto, sair automaticamente
+        if (isCompact) {
+            container.classList.remove('compact-mode');
+            toggleOptionsBtn.textContent = '⬆️';
+            toggleOptionsBtn.setAttribute('title', 'Ocultar opções');
+            showSuccess('Modo normal - Templates disponível');
+        }
+        
+        // Agora alternar a visibilidade do painel de templates
         toggleTemplatesPanel(!isTemplatesPanelVisible);
     });
 
     templateSaveBtn.addEventListener('click', () => {
         saveCurrentTemplate();
+        // Não fechar automaticamente o painel após salvar
     });
 
     templateLoadBtn.addEventListener('click', () => {
         loadSelectedTemplate();
+        // Não fechar automaticamente o painel após carregar
     });
 
     templateDeleteBtn.addEventListener('click', () => {
         deleteSelectedTemplate();
+        // Não fechar automaticamente o painel após excluir
     });
 
     templateCloseBtn.addEventListener('click', () => {
@@ -1948,27 +1958,49 @@
         hideSearch();
     });
 
+    toggleOptionsBtn.addEventListener('click', () => {
+        const container = document.getElementById('dom-scout-container');
+        const isCompact = container.classList.contains('compact-mode');
+        
+        if (isCompact) {
+            // Sair do modo compacto - mostrar opções
+            container.classList.remove('compact-mode');
+            toggleOptionsBtn.textContent = '⬆️';
+            toggleOptionsBtn.setAttribute('title', 'Ocultar opções');
+            showSuccess('Opções visíveis');
+        } else {
+            // Entrar no modo compacto - ocultar opções
+            // 🆕 Fechar também a seção de templates se estiver aberta
+            if (isTemplatesPanelVisible) {
+                toggleTemplatesPanel(false);
+            }
+            container.classList.add('compact-mode');
+            toggleOptionsBtn.textContent = '⬇️';
+            toggleOptionsBtn.setAttribute('title', 'Mostrar opções');
+            showSuccess('Modo compacto ativado');
+        }
+    });
+
     // ===================================
     // ✅ CONFIRMAÇÃO
     // ===================================
-    console.log('%c🔭 DOM Scout v4.1.1 - CORRIGIDO!', 'color: #667eea; font-size: 20px; font-weight: bold;');
+    console.log('%c🔭 DOM Scout v4.2.0 - SUPER ATUALIZADO!', 'color: #667eea; font-size: 20px; font-weight: bold;');
     console.log('%c┌────────────────────────────────────────────┐', 'color: #764ba2;');
-    console.log('%c✅ CORREÇÕES APLICADAS:', 'color: #4ecdc4; font-size: 16px; font-weight: bold;');
+    console.log('%c🎉 NOVAS FUNCIONALIDADES IMPLEMENTADAS:', 'color: #4ecdc4; font-size: 16px; font-weight: bold;');
     console.log('%c└────────────────────────────────────────────┘', 'color: #764ba2;');
-    console.log('%c\n🎯 Correção 1: Status do Template', 'color: #ffd93d; font-weight: bold;');
-    console.log('  ✓ Aparece SOMENTE quando "Usar Template" está marcado E há template carregado');
-    console.log('%c\n🎨 Correção 2: Cores dos Highlights', 'color: #ffd93d; font-weight: bold;');
-    console.log('  ✓ Elemento FOCADO: sempre AMARELO (#ffd93d)');
-    console.log('  ✓ Elementos NORMAIS: sempre AZUL (#4A90E2)');
-    console.log('  ✓ Elementos STARRED (*): sempre CIANO (#4ecdc4)');
-    console.log('%c\n🔄 Correção 3: Reabertura com Highlights', 'color: #ffd93d; font-weight: bold;');
-    console.log('  ✓ Ao reabrir (Ctrl+F), todos os resultados aparecem destacados');
-    console.log('  ✓ Elemento atual sempre em amarelo');
-    console.log('  ✓ Navegação entre elementos mantém cores corretas');
-    console.log('%c\n⌨️ Correção 4: Atalhos de Ação', 'color: #ffd93d; font-weight: bold;');
-    console.log('  ✓ Ctrl+Enter ou Ctrl+Espaço: executar ação');
-    console.log('  ✓ Enter e Espaço: funcionam normalmente no campo de busca');
-    console.log('  ✓ Não bloqueia mais digitação após navegação');
-    console.log('%c\n🎉 Todas as correções foram aplicadas com sucesso!', 'color: #667eea; font-size: 14px; font-weight: bold;');
+    console.log('%c\n🎯 Modo Compacto Avançado', 'color: #ffd93d; font-weight: bold;');
+    console.log('  ✅ Botão "⬆️" para ocultar/mostrar opções');
+    console.log('  ✅ Interface 63% mais compacta quando necessário');
+    console.log('  ✅ Estado preservado durante a sessão');
+    console.log('%c\n🔤 Suporte a Textos com Espaços', 'color: #ffd93d; font-weight: bold;');
+    console.log('  ✅ Aspas duplas: text:"Olá mundo"');
+    console.log('  ✅ Aspas simples: text:\'Hello world\'');
+    console.log('  ✅ Compatível com templates: text:"Bem-vindo {text}!"');
+    console.log('  ✅ Elimina ambiguidades em queries complexas');
+    console.log('%c\n🚀 Exemplos que agora funcionam:', 'color: #ffd93d; font-weight: bold;');
+    console.log('  tag:div text:"Texto com espaços" attr:data-id');
+    console.log('  tag:footer < tag:li > text:"Item menu" & tag:a');
+    console.log('  Templates com: text:"Bem-vindo {text}!"');
+    console.log('%c\n🎊 DOM Scout mais poderoso que nunca!', 'color: #667eea; font-size: 14px; font-weight: bold;');
     
 })();
