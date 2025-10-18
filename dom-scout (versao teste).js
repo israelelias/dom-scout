@@ -1,5 +1,5 @@
 // =================================== 
-// 🔭 DOM SCOUT v4.2.2 - VERSÃO LIMPA
+// 🔭 DOM SCOUT v4.2.3
 // ===================================
 // Para usar: Cole este código no Console (F12) e pressione Enter
 // Atalho: Ctrl+F para abrir e navegar
@@ -932,6 +932,7 @@
     // 🔍 PARSE AVANÇADO
     // ===================================
 
+    // 🆕 VALIDAÇÃO ADICIONAL: Preserva asteriscos em contexto regex
     function parseAdvancedQuery(query) {
         const parts = query.split('&').map(p => p.trim());
         const mainQuery = parts[0];
@@ -939,7 +940,7 @@
 
         let scopeQuery = null;
         let hierarchyQuery = mainQuery;
-        
+
         if (mainQuery.includes('<')) {
             const scopeParts = mainQuery.split('<').map(p => p.trim());
             scopeQuery = scopeParts[0];
@@ -958,13 +959,13 @@
         let highlightIndex = -1;
 
         hierarchyLevels.forEach((level, index) => {
-            console.log('✅ parseAdvancedQuery - hierarchyLevels - antes', { 
-              level
-            });    
-            const hasHighlight = level.includes('*');
-            if (hasHighlight) {
+            // 🆕 CORREÇÃO: Só marca como highlight se NÃO estiver em modo regex
+            // ou se estiver explicitamente marcado com * fora de contexto regex
+            const hasExplicitHighlight = level.includes('*') && 
+                                       !(searchOptions.regex && level.includes('text:'));
+
+            if (hasExplicitHighlight) {
                 highlightIndex = index;
-                // 🆕 USA FUNÇÃO CORRIGIDA
                 level = removeHighlightAsterisks(level);
             }
 
@@ -976,19 +977,12 @@
 
             parsedHierarchy.push({
                 filters: parsed.filters,
-                highlight: hasHighlight,
+                highlight: hasExplicitHighlight,
                 level: index
             });
-            console.log('✅ parseAdvancedQuery - hierarchyLevels - depois', { 
-              level
-            });  
         });
 
-        const errorLevel = parsedHierarchy.find(h => h.error);
-        if (errorLevel) {
-            return { error: errorLevel.error };
-        }
-
+        // 🆕 FALLBACK: Se não encontrou highlight explícito, usa o último
         if (highlightIndex === -1 && parsedHierarchy.length > 0) {
             highlightIndex = parsedHierarchy.length - 1;
             parsedHierarchy[highlightIndex].highlight = true;
@@ -1009,18 +1003,19 @@
         };
     }
 
-    // 🆕 FUNÇÃO AUXILIAR: Remove apenas asteriscos de highlight (não os de regex)
+    // 🆕 FUNÇÃO CORRIGIDA: Remove apenas asteriscos de highlight (preserva regex)
     function removeHighlightAsterisks(str) {
         let result = '';
         let inQuotes = false;
         let quoteChar = null;
-        
+        let inRegex = false;
+
         for (let i = 0; i < str.length; i++) {
             const char = str[i];
-            const nextChar = str[i + 1];
-            
+            const prevChar = i > 0 ? str[i - 1] : '';
+
             // Verifica se estamos entrando ou saindo de aspas
-            if ((char === '"' || char === "'") && (i === 0 || str[i - 1] !== '\\')) {
+            if ((char === '"' || char === "'") && prevChar !== '\\') {
                 if (!inQuotes) {
                     inQuotes = true;
                     quoteChar = char;
@@ -1029,20 +1024,24 @@
                     quoteChar = null;
                 }
             }
-            
-            // Se estivermos dentro de aspas, preserva todos os caracteres
-            if (inQuotes) {
+
+            // 🆕 DETECÇÃO DE MODO REGEX: Se estamos em text: com regex ativo
+            const isRegexContext = searchOptions.regex && 
+                                  str.substring(Math.max(0, i - 5), i).includes('text:');
+
+            // Se estivermos dentro de aspas OU em contexto de regex, preserva todos os caracteres
+            if (inQuotes || isRegexContext) {
                 result += char;
             } 
-            // Se não estiver em aspas, remove apenas * que não sejam precedidos por \
-            else if (char === '*' && (i === 0 || str[i - 1] !== '\\')) {
-                // Não adiciona o * (remove)
+            // Se não estiver em aspas nem em regex, remove apenas * que não sejam precedidos por \
+            else if (char === '*' && prevChar !== '\\') {
+                // Não adiciona o * (remove apenas asteriscos de highlight)
             } 
             else {
                 result += char;
             }
         }
-        
+
         return result.trim();
     }
 
@@ -1103,7 +1102,6 @@
 
         clearHighlights();
         currentMatches = [];
-        currentIndex = 0;
 
         if (!query || query.length === 0) {
             updateInfo(0, 0);
@@ -1168,7 +1166,7 @@
 
         updateInfo(currentMatches.length, currentIndex + 1);
 
-        if (currentMatches.length > 0) {
+        if (currentMatches.length > 0 && currentIndex === -1) {
             goToMatch(0);
         }
     }
@@ -1597,6 +1595,7 @@ function matchText(element, textValue, directOnly = false) {
             if (currentMatches[currentIndex]) {
                 goToMatch(currentIndex);
             }
+
         }
     }
 
@@ -1783,15 +1782,23 @@ function matchText(element, textValue, directOnly = false) {
 
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             e.preventDefault();
+            
             if (!isVisible) {
                 showSearch();
             } else {
+                // 🆕 COMPORTAMENTO MELHORADO: Sempre foca e seleciona o campo
+                searchInput.focus();
+                searchInput.select();
+                
+                // Executa a navegação normalmente
                 nextMatch();
             }
         }
 
         if (e.shiftKey && e.key === 'F' && isVisible) {
             e.preventDefault();
+            // 🆕 Mantém o foco no campo durante navegação anterior
+            searchInput.focus();
             prevMatch();
         }
 
@@ -1807,6 +1814,17 @@ function matchText(element, textValue, directOnly = false) {
         }
     });
 
+    searchInput.addEventListener('blur', () => {
+        // Se a ferramenta está visível, mantém o foco no campo
+        if (isVisible) {
+            setTimeout(() => {
+                if (isVisible && document.activeElement !== searchInput) {
+                    searchInput.focus();
+                }
+            }, 10);
+        }
+    });
+
     searchInput.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
@@ -1816,6 +1834,8 @@ function matchText(element, textValue, directOnly = false) {
 
     let searchTimeout;
     searchInput.addEventListener('input', (e) => {
+        // Reset index para forçar navegação ao primeiro resultado na nova busca
+        currentIndex = -1;
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             if (searchOptions.htmlMode) {
@@ -1978,6 +1998,27 @@ function matchText(element, textValue, directOnly = false) {
             toggleOptionsBtn.textContent = '⬇️';
             toggleOptionsBtn.setAttribute('title', 'Mostrar opções');
             showSuccess('Modo compacto ativado');
+        }
+    });
+
+    // 🖱️ CLIQUE PARA NAVEGAR (NOVA FUNCIONALIDADE)
+    document.addEventListener('click', (e) => {
+        if (!isVisible) return;
+        
+        // Verifica se o clique foi em um elemento destacado
+        const clickedElement = e.target.closest('.dom-scout-highlight, .dom-scout-highlight-star');
+        if (clickedElement && currentMatches.length > 0) {
+            // Encontra o índice do elemento clicado na lista de matches
+            const clickedIndex = currentMatches.findIndex(match => match.element === clickedElement);
+            if (clickedIndex !== -1) {
+                goToMatch(clickedIndex);
+                
+                // Feedback visual adicional
+                clickedElement.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    clickedElement.style.transform = '';
+                }, 200);
+            }
         }
     });
 
