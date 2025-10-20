@@ -1340,70 +1340,70 @@
             : elementAttrValue.toLowerCase().includes(searchValue.toLowerCase());
     }
 
-function matchText(element, textValue, directOnly = false) {
-    let text;
-    
-    if (directOnly) {
-        text = Array.from(element.childNodes)
-            .filter(node => node.nodeType === Node.TEXT_NODE)
-            .map(node => node.textContent.trim())
-            .join(' ');
-    } else {
-        text = element.textContent;
-    }
-    
-    let elementText = text.trim();
-    let searchText = textValue;
-    
-    // 🆕 CORREÇÃO: Processamento diferenciado para regex
-    if (searchOptions.regex) {
-        // Para regex, preservamos a string exatamente como foi fornecida
-        // apenas removemos as aspas externas se existirem
-        const isQuoted = (searchText.startsWith('"') && searchText.endsWith('"')) || 
-                        (searchText.startsWith("'") && searchText.endsWith("'"));
+    function matchText(element, textValue, directOnly = false) {
+        let text;
         
-        if (isQuoted) {
-            searchText = searchText.slice(1, -1);
+        if (directOnly) {
+            text = Array.from(element.childNodes)
+                .filter(node => node.nodeType === Node.TEXT_NODE)
+                .map(node => node.textContent.trim())
+                .join(' ');
+        } else {
+            text = element.textContent;
         }
         
-        try {
-            // 🆕 CORREÇÃO CRÍTICA: Aplicar prepareString consistentemente
-            if (!searchOptions.accentSensitive) {
-                elementText = prepareString(elementText);
-                searchText = prepareString(searchText); // 🆕 AGORA TAMBÉM NO searchText!
+        let elementText = text.trim();
+        let searchText = textValue;
+        
+        // 🆕 CORREÇÃO: Processamento diferenciado para regex
+        if (searchOptions.regex) {
+            // Para regex, preservamos a string exatamente como foi fornecida
+            // apenas removemos as aspas externas se existirem
+            const isQuoted = (searchText.startsWith('"') && searchText.endsWith('"')) || 
+                            (searchText.startsWith("'") && searchText.endsWith("'"));
+            
+            if (isQuoted) {
+                searchText = searchText.slice(1, -1);
             }
             
-            const flags = searchOptions.caseSensitive ? '' : 'i';
-            const regex = new RegExp(searchText, flags);
+            try {
+                // 🆕 CORREÇÃO CRÍTICA: Aplicar prepareString consistentemente
+                if (!searchOptions.accentSensitive) {
+                    elementText = prepareString(elementText);
+                    searchText = prepareString(searchText); // 🆕 AGORA TAMBÉM NO searchText!
+                }
+                
+                const flags = searchOptions.caseSensitive ? '' : 'i';
+                const regex = new RegExp(searchText, flags);
+                
+                return regex.test(elementText);
+            } catch (e) {
+                console.error('❌ Regex Error:', e);
+                return false;
+            }
+        } else {
+            // Processamento normal para texto sem regex
+            if ((searchText.startsWith('"') && searchText.endsWith('"')) || 
+                (searchText.startsWith("'") && searchText.endsWith("'"))) {
+                searchText = searchText.slice(1, -1);
+            }
             
-            return regex.test(elementText);
-        } catch (e) {
-            console.error('❌ Regex Error:', e);
-            return false;
+            // 🆕 CORREÇÃO: Aplicar prepareString consistentemente
+            elementText = prepareString(elementText);
+            searchText = prepareString(searchText);
+            
+            if (!elementText) return false;
+            
+            if (searchOptions.wholeWords) {
+                const regex = new RegExp(`\\b${escapeRegex(searchText)}\\b`, searchOptions.caseSensitive ? '' : 'i');
+                return regex.test(elementText);
+            }
+            
+            return searchOptions.caseSensitive
+                ? elementText.includes(searchText)
+                : elementText.toLowerCase().includes(searchText.toLowerCase());
         }
-    } else {
-        // Processamento normal para texto sem regex
-        if ((searchText.startsWith('"') && searchText.endsWith('"')) || 
-            (searchText.startsWith("'") && searchText.endsWith("'"))) {
-            searchText = searchText.slice(1, -1);
-        }
-        
-        // 🆕 CORREÇÃO: Aplicar prepareString consistentemente
-        elementText = prepareString(elementText);
-        searchText = prepareString(searchText);
-        
-        if (!elementText) return false;
-        
-        if (searchOptions.wholeWords) {
-            const regex = new RegExp(`\\b${escapeRegex(searchText)}\\b`, searchOptions.caseSensitive ? '' : 'i');
-            return regex.test(elementText);
-        }
-        
-        return searchOptions.caseSensitive
-            ? elementText.includes(searchText)
-            : elementText.toLowerCase().includes(searchText.toLowerCase());
     }
-}
 
     // ===================================
     // 🔍 BUSCA DE TEXTO
@@ -1424,7 +1424,6 @@ function matchText(element, textValue, directOnly = false) {
 
         clearHighlights();
         currentMatches = [];
-        currentIndex = 0;
 
         if (!term || term.length === 0) {
             updateInfo(0, 0);
@@ -1502,7 +1501,7 @@ function matchText(element, textValue, directOnly = false) {
 
         updateInfo(currentMatches.length, currentIndex + 1);
 
-        if (currentMatches.length > 0) {
+        if (currentMatches.length > 0 && currentIndex === -1) {
             goToMatch(0);
         }
     }
@@ -1780,26 +1779,45 @@ function matchText(element, textValue, directOnly = false) {
             }
         }
 
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        // Detecta Ctrl+F (ou Cmd+F no macOS)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
             e.preventDefault();
-            
+
+            // Se o campo de busca não estiver visível, exibe-o
             if (!isVisible) {
                 showSearch();
-            } else {
-                // 🆕 COMPORTAMENTO MELHORADO: Sempre foca e seleciona o campo
-                searchInput.focus();
-                searchInput.select();
-                
-                // Executa a navegação normalmente
+                return;
+            }
+
+            // Verifica se o campo já estava focado antes de pressionar Ctrl+F
+            const wasFocused = document.activeElement === searchInput;
+
+            // Sempre foca e seleciona o campo
+            searchInput.focus();
+            searchInput.select();
+
+            // 🧠 NOVA LÓGICA:
+            // Só navega para o próximo resultado se o campo já estava focado
+            if (wasFocused) {
                 nextMatch();
             }
         }
 
-        if (e.shiftKey && e.key === 'F' && isVisible) {
+        // Detecta Ctrl+G → navegação para resultado anterior
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g' && isVisible) {
             e.preventDefault();
-            // 🆕 Mantém o foco no campo durante navegação anterior
+
+            // Verifica se o campo já estava focado antes de pressionar Ctrl+G
+            const wasFocused = document.activeElement === searchInput;
+
+            // Mantém foco e seleção
             searchInput.focus();
-            prevMatch();
+            searchInput.select();
+
+            // Só navega para o resultado anterior se o campo já estava focado
+            if (wasFocused) {
+              prevMatch();
+            }
         }
 
         if (e.key === 'Escape' && isVisible) {
@@ -1811,17 +1829,6 @@ function matchText(element, textValue, directOnly = false) {
                 e.preventDefault();
                 executeAction();
             }
-        }
-    });
-
-    searchInput.addEventListener('blur', () => {
-        // Se a ferramenta está visível, mantém o foco no campo
-        if (isVisible) {
-            setTimeout(() => {
-                if (isVisible && document.activeElement !== searchInput) {
-                    searchInput.focus();
-                }
-            }, 10);
         }
     });
 
